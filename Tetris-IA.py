@@ -78,7 +78,7 @@ while 1:
     font = pygame.font.Font(FONT, FONT_SIZE)
     scoreText = font.render("Score : " + str(score), True, SECONDARY_COLOR, MAIN_COLOR)
     scoreTextRect = scoreText.get_rect()
-    scoreTextRect.topleft = (2 * SCREEN_BORDER, BOARD_HEIGHT / 4 + 2 * SCREEN_BORDER + FONT_SIZE)
+    scoreTextRect.topleft = (2 * SCREEN_BORDER, BOARD_HEIGHT / 4 + (2 * SCREEN_BORDER + FONT_SIZE))
     screen.blit(scoreText, scoreTextRect)
 
     pygame.display.flip()
