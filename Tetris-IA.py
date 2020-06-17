@@ -37,6 +37,19 @@ level = 0
 score = 0
 Leaderboard = [["Clément", 9999], ["Axel", -1]]
 
+#Methods
+def drawBoard(board):
+    for i in range(0, 10):
+        for j in range(0, 20):
+            if(board[i][j]==1):
+                pygame.draw.rect(screen, GREEN,
+                pygame.Rect(
+                (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT),
+                (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
+                )
+                )
+
+
 # Main code
 
 ## Init pygame environment
@@ -74,16 +87,8 @@ while 1:
     ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
     board = np.zeros((11, 21), np.int8)#access via board[x][y]
     board[0][2] = 1
-    ## Draw squares
-    for i in range(0, 10):
-        for j in range(0, 20):
-            if(board[i][j]==1):
-                pygame.draw.rect(screen, GREEN,
-                pygame.Rect(
-                (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT),
-                (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
-                )
-                )
+    ## Draw board
+    drawBoard(board)
 
     # Draw Stats
     font = pygame.font.Font(FONT, FONT_SIZE)
