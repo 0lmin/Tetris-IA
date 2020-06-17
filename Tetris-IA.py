@@ -85,7 +85,7 @@ while 1:
     # Draw board
     ## To be implemented after GUI
     ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
-    board = np.zeros((11, 21), np.int8)#access via board[x][y]
+    board = np.zeros((10, 20), np.int8)#access via board[x][y]
     board[0][2] = 1
     ## Draw board
     drawBoard(board)
