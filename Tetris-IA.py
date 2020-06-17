@@ -1,4 +1,5 @@
 import sys, pygame
+import numpy as np
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -67,6 +68,22 @@ while 1:
         for j in range(1, 21):
             pygame.draw.circle(screen, SECONDARY_COLOR,
                 (BOARD_LEFT - int(DOT_SPACE_WIDTH / 2) + (i * DOT_SPACE_WIDTH), BOARD_TOP - int(DOT_SPACE_HEIGHT / 2) + j * DOT_SPACE_HEIGHT), DOT_RADIUS)
+
+    # Draw board
+    ## To be implemented after GUI
+    ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
+    board = np.zeros((11, 21), np.int8)#access via board[x][y]
+    board[0][2] = 1
+    ## Draw squares
+    for i in range(0, 10):
+        for j in range(0, 20):
+            if(board[i][j]==1):
+                pygame.draw.rect(screen, GREEN,
+                pygame.Rect(
+                (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT),
+                (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
+                )
+                )
 
     # Draw Stats
     font = pygame.font.Font(FONT, FONT_SIZE)
