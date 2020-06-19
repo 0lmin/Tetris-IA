@@ -32,6 +32,15 @@ DOT_RADIUS = int(BOARD_LEFT / 100)
 
 SCREEN_BORDER = 15
 
+TETROMINO_I = ["I", (0, 255, 255)]
+TETROMINO_O = ["O", (255, 255, 0)]
+TETROMINO_T = ["T", (170, 0, 255)]
+TETROMINO_L = ["L", (255, 165, 0)]
+TETROMINO_J = ["J", (0, 0, 255)]
+TETROMINO_Z = ["Z", (255, 0, 0)]
+TETROMINO_S = ["S", (0, 255, 0)]
+TETROMINOS = [TETROMINO_I, TETROMINO_O, TETROMINO_T, TETROMINO_L, TETROMINO_J, TETROMINO_Z, TETROMINO_S]
+
 ##
 level = 0
 score = 0
@@ -41,8 +50,8 @@ Leaderboard = [["Clément", 9999], ["Axel", -1]]
 def drawBoard(board):
     for i in range(0, 10):
         for j in range(0, 20):
-            if(board[i][j]==1):
-                pygame.draw.rect(screen, GREEN,
+            if(board[i][j]!=0):
+                pygame.draw.rect(screen, TETROMINOS[board[i][j]][1],
                 pygame.Rect(
                 (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT),
                 (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
@@ -86,7 +95,8 @@ while 1:
     ## To be implemented after GUI
     ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
     board = np.zeros((10, 20), np.int8)#access via board[x][y]
-    board[0][2] = 1
+    board[0][2] = 1 #0 empty, [1;7] => colors
+    board[1][3] = 2
     ## Draw board
     drawBoard(board)
 
