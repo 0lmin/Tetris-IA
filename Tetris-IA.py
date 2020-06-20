@@ -105,6 +105,7 @@ while 1:
     board[8][9] = 4
     board[9][9] = 4
     board[9][19] = 5
+    board[5][0] = 5
     ## Draw board
     drawBoard(board)
 
