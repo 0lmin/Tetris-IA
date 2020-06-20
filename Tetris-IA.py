@@ -11,8 +11,8 @@ RED =   (255,   0,   0)
 #  Variables
 
 ## Can be configured by the user
-MAIN_COLOR = WHITE
-SECONDARY_COLOR = BLACK
+MAIN_COLOR = BLACK
+SECONDARY_COLOR = WHITE
 
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -50,14 +50,13 @@ Leaderboard = [["Clément", 9999], ["Axel", -1]]
 def drawBoard(board):
     for i in range(0, 10):
         for j in range(0, 20):
+            cell = board[i][j]
             if(board[i][j]!=0):
-                pygame.draw.rect(screen, TETROMINOS[board[i][j]][1],
-                pygame.Rect(
-                (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT),
-                (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
-                )
-                )
+                rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT)
+                rectSize = (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
+                rectToDraw = pygame.Rect( rectOrigin, rectSize )
 
+                pygame.draw.rect(screen, TETROMINOS[cell][1], rectToDraw)
 
 # Main code
 
