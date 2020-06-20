@@ -52,8 +52,8 @@ def drawBoard(board):
         for j in range(0, 20):
             cell = board[i][j]
             if(board[i][j]!=0):
-                rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH), BOARD_TOP + j * DOT_SPACE_HEIGHT)
-                rectSize = (DOT_SPACE_WIDTH, DOT_SPACE_HEIGHT)
+                rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
+                rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
                 rectToDraw = pygame.Rect( rectOrigin, rectSize )
 
                 pygame.draw.rect(screen, TETROMINOS[cell][1], rectToDraw)
