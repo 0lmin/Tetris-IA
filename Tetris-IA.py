@@ -67,17 +67,6 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 screen.fill(MAIN_COLOR)
 
-## Draw board border
-pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
-font = pygame.font.Font(FONT, FONT_SIZE)
-title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
-titleRect = title.get_rect()
-titleRect.center = (BOARD_LEFT + int(BOARD_WIDTH / 2), BOARD_TOP)
-screen.blit(title, titleRect)
-
-# Draw Stats border
-pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
-
 # Game loop
 while 1:
     # Enable exit the window
@@ -108,6 +97,17 @@ while 1:
     board[5][0] = 5
     ## Draw board
     drawBoard(board)
+
+    ## Draw board border
+    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
+    font = pygame.font.Font(FONT, FONT_SIZE)
+    title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
+    titleRect = title.get_rect()
+    titleRect.center = (BOARD_LEFT + int(BOARD_WIDTH / 2), BOARD_TOP -15)
+    screen.blit(title, titleRect)
+
+    # Draw Stats border
+    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
 
     # Draw Stats
     font = pygame.font.Font(FONT, FONT_SIZE)
