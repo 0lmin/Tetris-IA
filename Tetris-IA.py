@@ -96,6 +96,15 @@ while 1:
     board = np.zeros((10, 20), np.int8)#access via board[x][y]
     board[0][2] = 1 #0 empty, [1;7] => colors
     board[1][3] = 2
+    board[1][4] = 2
+    board[2][3] = 2
+    board[2][4] = 4
+    board[3][4] = 2
+    board[4][4] = 1
+    board[8][8] = 3
+    board[8][9] = 4
+    board[9][9] = 4
+    board[9][19] = 5
     ## Draw board
     drawBoard(board)
 
