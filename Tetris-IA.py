@@ -32,6 +32,8 @@ DOT_RADIUS = int(BOARD_LEFT / 100)
 
 SCREEN_BORDER = 15
 
+GRAVITY_TICK = 5000
+
 TETROMINO_I = ["I", (0, 255, 255)]
 TETROMINO_O = ["O", (255, 255, 0)]
 TETROMINO_T = ["T", (170, 0, 255)]
@@ -74,11 +76,27 @@ screen.blit(title, titleRect)
 # Draw Stats border
 pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
 
+# Gravity event
+pygame.time.set_timer(pygame.KEYDOWN,GRAVITY_TICK)
+
 # Game loop
 while 1:
     # Enable exit the window
     for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if not event.key or event.key== pygame.K_DOWN:
+                # Do down
+                print('down')
+            elif event.key == pygame.K_LEFT:
+                # Do left
+                print("left")
+            elif event.key == pygame.K_RIGHT:
+                # Do right
+                print("right")
+            elif event.key == pygame.K_UP:
+                # Do up
+                print("up")
 
     # Draw dots
     for i in range(1, 11):
