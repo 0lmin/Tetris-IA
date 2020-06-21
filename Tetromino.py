@@ -133,6 +133,16 @@ class Tetromino:
 
     def goRight(self, board):
         # Board is used to see if the move is possible
+        for j in range(len(self.matrice)):
+            for i in range(len(self.matrice)):
+                # Env colisions
+                if ((self.position[1] + j < 0 or self.position[1] + j > 19) or
+                    (self.position[0] + 1 + i < 0 or self.position[0] + 1 + i > 9)) and (self.matrice[i][j] > 0):
+                    return False
+                # Board colisions
+                if ((self.position[1] + j > 0 and self.position[1] + j < 19) and
+                    (self.position[0] + 1 + i > 0 and self.position[0] + 1 + i < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + 1 + i, self.position[1] + j] > 0:
+                    return False
         self.position[0] = self.position[0] + 1
 
     def goUP(self, board):
