@@ -70,17 +70,20 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.key.set_repeat(300,100)
 pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
 
-currentT = None
+currentT = generateTetromino()
+
+board = np.zeros((10, 20), np.int8)
 
 # Game loop
 while 1:
-    # Enable exit the window
+    # Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.USEREVENT:
             if not(currentT.goDown(board)):
-                print("Lock")
+                currentT.applyOnBoard(board)
+                currentT = generateTetromino()
         elif event.type == pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
                 if currentT.goDown(board):
@@ -92,9 +95,8 @@ while 1:
             elif event.key == pygame.K_UP:
                 currentT.goUP(board)
 
-    screen.fill(MAIN_COLOR)
-
     ## Draw board border
+    screen.fill(MAIN_COLOR)
     pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
     font = pygame.font.Font(FONT, FONT_SIZE)
     title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
@@ -105,7 +107,6 @@ while 1:
     # Draw Stats border
     pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
 
-
     # Draw dots
     for i in range(1, 11):
         for j in range(1, 21):
@@ -115,13 +116,10 @@ while 1:
     # Draw board
     ## To be implemented after GUI
     ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
-    board = np.zeros((10, 20), np.int8)#access via board[x][y]
     # board[0][2] = 1 #0 empty, [1;7] => colors
     # board[1][3] = 2
     ## Draw board
     # drawBoard(board)
-    if(currentT == None):
-        currentT = generateTetromino()
     changedBoard = copy.deepcopy(board)
     currentT.applyOnBoard(changedBoard)
     drawBoard(changedBoard)
