@@ -14,7 +14,7 @@ T_MATRICE=2
 # TETROMINO_I.name = "I"
 # TETROMINO_I.color = ...
 
-TETROMINO_I = [0, (0, 255, 255), [np.array([[0,0,0,0],
+TETROMINO_I = [1, (0, 255, 255), [np.array([[0,0,0,0],
                                               [1,1,1,1],
                                               [0,0,0,0],
                                               [0,0,0,0]]), np.array([[0,1,0,0],
@@ -27,20 +27,20 @@ TETROMINO_I = [0, (0, 255, 255), [np.array([[0,0,0,0],
                                                                                                                    [0,0,1,0],
                                                                                                                    [0,0,1,0],
                                                                                                                    [0,0,1,0]])]]
-TETROMINO_O = [1, (255, 255, 0), [np.array([[0,1,1,0],
-                                              [0,1,1,0],
-                                              [0,0,0,0],
-                                              [0,0,0,0]]), np.array([[0,1,1,0],
-                                                                     [0,1,1,0],
-                                                                     [0,0,0,0],
-                                                                     [0,0,0,0]]), np.array([[0,1,1,0],
-                                                                                            [0,1,1,0],
-                                                                                            [0,0,0,0],
-                                                                                            [0,0,0,0]]), np.array([[0,1,1,0],
-                                                                                                                   [0,1,1,0],
-                                                                                                                   [0,0,0,0],
-                                                                                                                   [0,0,0,0]])]]
-TETROMINO_T = [2, (170, 0, 255), [np.array([[0,1,0],
+TETROMINO_O = [2, (255, 255, 0), [np.array([[0,0,0,0],
+                                            [1,1,0,0],
+                                            [1,1,0,0],
+                                            [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                   [1,1,0,0],
+                                                                   [1,1,0,0],
+                                                                   [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                                          [1,1,0,0],
+                                                                                          [1,1,0,0],
+                                                                                          [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                                                                 [1,1,0,0],
+                                                                                                                 [1,1,0,0],
+                                                                                                                 [0,0,0,0]])]]
+TETROMINO_T = [3, (170, 0, 255), [np.array([[0,1,0],
                                               [1,1,1],
                                               [0,0,0]]),np.array([[0,1,0],
                                                                  [0,1,1],
@@ -49,7 +49,7 @@ TETROMINO_T = [2, (170, 0, 255), [np.array([[0,1,0],
                                                                                       [0,1,0]]), np.array([[0,1,0],
                                                                                                            [1,1,0],
                                                                                                            [0,1,0]])]]
-TETROMINO_L = [3, (255, 165, 0), [np.array([[0,0,1],
+TETROMINO_L = [4, (255, 165, 0), [np.array([[0,0,1],
                                               [1,1,1],
                                               [0,0,0]]),np.array([[0,1,0],
                                                                  [0,1,0],
@@ -58,7 +58,7 @@ TETROMINO_L = [3, (255, 165, 0), [np.array([[0,0,1],
                                                                                       [1,0,0]]), np.array([[1,1,0],
                                                                                                            [0,1,0],
                                                                                                            [0,1,0]])]]
-TETROMINO_J = [4, (0, 0, 255), [np.array([[1,0,0],
+TETROMINO_J = [5, (0, 0, 255), [np.array([[1,0,0],
                                             [1,1,1],
                                             [0,0,0]]),np.array([[0,1,1],
                                                                [0,1,0],
@@ -67,7 +67,7 @@ TETROMINO_J = [4, (0, 0, 255), [np.array([[1,0,0],
                                                                                     [0,0,1]]), np.array([[0,1,0],
                                                                                                          [0,1,0],
                                                                                                          [1,1,0]])]]
-TETROMINO_Z = [5, (255, 0, 0), [np.array([[1,1,0],
+TETROMINO_Z = [6, (255, 0, 0), [np.array([[1,1,0],
                                             [0,1,1],
                                             [0,0,0]]),np.array([[0,0,1],
                                                                [0,1,1],
@@ -76,7 +76,7 @@ TETROMINO_Z = [5, (255, 0, 0), [np.array([[1,1,0],
                                                                                     [0,1,1]]), np.array([[0,1,0],
                                                                                                          [1,1,0],
                                                                                                          [1,0,0]])]]
-TETROMINO_S = [6, (0, 255, 0), [np.array([[0,1,1],
+TETROMINO_S = [7, (0, 255, 0), [np.array([[0,1,1],
                                             [1,1,0],
                                             [0,0,0]]),np.array([[0,1,0],
                                                                  [0,1,1],
@@ -97,14 +97,15 @@ class Tetromino:
         self.matrice = TETROMINOS.get(type)[T_MATRICE][rotation] #matrice
 
     def applyOnBoard(self, board):#fonction appelé à chaque (affichage) + placement de la piece
-        for i in range(len(self.matrice)):
-            for j in range(len(self.matrice)):
-                board[self.position[0] + i][self.position[1] + j] = self.matrice[i,j] * TETROMINOS.get(self.type)[T_TYPE]
+        for j in range(len(self.matrice)):
+            for i in range(len(self.matrice)):
+                if self.matrice[i][j] == 1:
+                    board[self.position[0] + i][self.position[1] + j] = TETROMINOS.get(self.type)[T_TYPE]
 
     def goDown(self, board):
         # Board is used to see if the move is possible
-        for i in range(len(self.matrice)):
-            for j in range(len(self.matrice)):
+        for j in range(len(self.matrice)):
+            for i in range(len(self.matrice)):
                 # Env colisions
                 if (self.position[0] + i < 0 or self.position[0] + i > 9) and self.matrice[i][j] > 0:
                     return False
