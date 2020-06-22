@@ -113,8 +113,8 @@ class Tetromino:
     def __boardCollision(self, board, dir):
         for j in range(len(self.matrice)):
             for i in range(len(self.matrice)):
-                if ((self.position[1] + j +  dir[1] > 0 and self.position[1] + j + dir[1] < 19) and
-                    (self.position[0] + i + dir[0] > 0 and self.position[0] + i + dir[0] < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + i + dir[0], self.position[1] + j + dir[1]] > 0:
+                if ((self.position[1] + j +  dir[1] >= 0 and self.position[1] + j + dir[1] <= 19) and
+                    (self.position[0] + i + dir[0] >= 0 and self.position[0] + i + dir[0] <= 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + i + dir[0], self.position[1] + j + dir[1]] > 0:
                     return True
         return False
 
