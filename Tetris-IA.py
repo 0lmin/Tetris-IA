@@ -1,5 +1,10 @@
 import sys, pygame
 import numpy as np
+import copy
+import random
+import Tetromino
+
+pygame.quit()
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -32,14 +37,10 @@ DOT_RADIUS = int(BOARD_LEFT / 100)
 
 SCREEN_BORDER = 15
 
-TETROMINO_I = ["I", (0, 255, 255)]
-TETROMINO_O = ["O", (255, 255, 0)]
-TETROMINO_T = ["T", (170, 0, 255)]
-TETROMINO_L = ["L", (255, 165, 0)]
-TETROMINO_J = ["J", (0, 0, 255)]
-TETROMINO_Z = ["Z", (255, 0, 0)]
-TETROMINO_S = ["S", (0, 255, 0)]
-TETROMINOS = [TETROMINO_I, TETROMINO_O, TETROMINO_T, TETROMINO_L, TETROMINO_J, TETROMINO_Z, TETROMINO_S]
+GRAVITY_TICK = 500
+
+TETROMINOS_COLOR = [(0,0,0),(0, 255, 255), (255, 255, 0), (170, 0, 255), (255, 165, 0), (0, 0, 255), (255, 0, 0), (0, 255, 0)]
+TETROMINOS_LIST = ["I", "O", "T", "L", "J", "Z", "S"]
 
 ##
 level = 0
@@ -51,12 +52,14 @@ def drawBoard(board):
     for i in range(0, 10):
         for j in range(0, 20):
             cell = board[i][j]
-            if(not np.array_equal(cell, [0, 0, 0])):
+            if(cell != 0):
                 rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
                 rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
                 rectToDraw = pygame.Rect( rectOrigin, rectSize )
+                pygame.draw.rect(screen, TETROMINOS_COLOR[cell], rectToDraw) ##2nd argument should be replaced by color
 
-                pygame.draw.rect(screen, cell, rectToDraw)
+def generateTetromino():
+    return Tetromino.Tetromino(TETROMINOS_LIST[random.randint(0,6)], 0, [2,0])
 
 # Main code
 
@@ -65,13 +68,49 @@ pygame.init()
 
 ## Create surface
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-screen.fill(MAIN_COLOR)
+
+# Gravity event
+pygame.key.set_repeat(300,100)
+pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
+
+board = np.zeros((10, 20), np.int8)
+currentT = generateTetromino()
+
 
 # Game loop
 while 1:
-    # Enable exit the window
+    # Events
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: sys.exit()
+        if event.type == pygame.QUIT:
+            sys.exit()
+        elif event.type == pygame.USEREVENT:
+            if not(currentT.goDown(board)):
+                currentT.applyOnBoard(board) #lock
+                currentT = generateTetromino()
+        elif event.type == pygame.KEYDOWN:
+            if event.key== pygame.K_DOWN:
+                if currentT.goDown(board):
+                    pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
+            elif event.key == pygame.K_LEFT:
+                currentT.goLeft(board)
+            elif event.key == pygame.K_RIGHT:
+                currentT.goRight(board)
+            elif event.key == pygame.K_UP:
+                currentT.goUP(board)
+                currentT.applyOnBoard(board) #lock
+                currentT = generateTetromino()
+
+    ## Draw board border
+    screen.fill(MAIN_COLOR)
+    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
+    font = pygame.font.Font(FONT, FONT_SIZE)
+    title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
+    titleRect = title.get_rect()
+    titleRect.center = (BOARD_LEFT + int(BOARD_WIDTH / 2), BOARD_TOP)
+    screen.blit(title, titleRect)
+
+    # Draw Stats border
+    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
 
     # Draw dots
     for i in range(1, 11):
@@ -80,23 +119,9 @@ while 1:
                 (BOARD_LEFT - int(DOT_SPACE_WIDTH / 2) + (i * DOT_SPACE_WIDTH), BOARD_TOP - int(DOT_SPACE_HEIGHT / 2) + j * DOT_SPACE_HEIGHT), DOT_RADIUS)
 
     # Draw board
-    ## To be implemented after GUI
-    ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
-    board = np.zeros((10, 20, 3), np.uint8)#access via board[x][y]
-    board[0][2] = TETROMINOS[1][1] #0 empty, [1;7] => colors
-    board[1][3] = TETROMINOS[2][1]
-    board[1][4] = TETROMINOS[2][1]
-    board[2][3] = TETROMINOS[2][1]
-    board[2][4] = TETROMINOS[4][1]
-    board[3][4] = TETROMINOS[2][1]
-    board[4][4] = TETROMINOS[1][1]
-    board[8][8] = TETROMINOS[3][1]
-    board[8][9] = TETROMINOS[4][1]
-    board[9][9] = TETROMINOS[4][1]
-    board[9][19] = TETROMINOS[5][1]
-    board[5][0] = TETROMINOS[5][1]
-    ## Draw board
-    drawBoard(board)
+    changedBoard = copy.deepcopy(board)
+    currentT.applyOnBoard(changedBoard)
+    drawBoard(changedBoard)
 
     ## Draw board border
     pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
