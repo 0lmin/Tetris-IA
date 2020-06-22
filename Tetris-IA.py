@@ -77,8 +77,12 @@ while 1:
     mainBoard.draw()
 
     # Draw board
+    mainBoard.deleteFullLine() # Add score + add level
     changedBoard = copy.deepcopy(mainBoard.board)
-    currentT.applyOnBoard(changedBoard)
+    if currentT.applyOnBoard(changedBoard):
+        # Game over
+        print("C'est perdu")
+        sys.exit()
     mainBoard.drawBoard(changedBoard)
 
     pygame.display.flip()

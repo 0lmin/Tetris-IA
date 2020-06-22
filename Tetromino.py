@@ -102,10 +102,13 @@ class Tetromino:
         self.matrice = TETROMINOS.get(type)[T_MATRICE][rotation] #matrice
 
     def applyOnBoard(self, board):#fonction appelé à chaque (affichage) + placement de la piece
+        if self.__boardCollision(board, [0,0], 0):
+            return True
         for j in range(len(self.matrice)):
             for i in range(len(self.matrice)):
                 if self.matrice[i][j] == 1:
                     board[self.position[0] + i][self.position[1] + j] = TETROMINOS.get(self.type)[T_TYPE]
+        return False
 
     def __envCollision(self, board, dir, rotation):
         matrice = TETROMINOS.get(self.type)[T_MATRICE][(self.rotation + rotation) % 4]

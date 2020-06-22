@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import Tetromino
+import functools
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -49,6 +50,8 @@ class Board:
 
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.board = np.zeros((10, 20), np.int8)
+        self.level = 0
+        self.score = 0
 
         # Gravity event
         pygame.key.set_repeat(300,100)
@@ -99,3 +102,14 @@ class Board:
                     rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
                     rectToDraw = pygame.Rect( rectOrigin, rectSize )
                     pygame.draw.rect(self.screen, TETROMINOS_COLOR[cell], rectToDraw) ##2nd argument should be replaced by color
+
+    def deleteFullLine(self):
+        # Delete full line
+        for j in range(20):
+            for i in range(10):
+                if self.board[i][j] == 0:
+                    break
+            if i == 9 and self.board[i][j] != 0:
+                for k in range(10):
+                    for l in range(j, 0, -1):
+                        self.board[k][l] = self.board[k][l - 1]
