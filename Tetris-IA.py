@@ -51,12 +51,12 @@ def drawBoard(board):
     for i in range(0, 10):
         for j in range(0, 20):
             cell = board[i][j]
-            if(board[i][j]!=0):
+            if(not np.array_equal(cell, [0, 0, 0])):
                 rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
                 rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
                 rectToDraw = pygame.Rect( rectOrigin, rectSize )
 
-                pygame.draw.rect(screen, TETROMINOS[cell][1], rectToDraw)
+                pygame.draw.rect(screen, cell, rectToDraw)
 
 # Main code
 
@@ -82,19 +82,19 @@ while 1:
     # Draw board
     ## To be implemented after GUI
     ##board = [([0] * 21)] * 11 #BUG => same ref, deepcopy needed?
-    board = np.zeros((10, 20, 3), np.int8)#access via board[x][y]
-    board[0][2] = 1 #0 empty, [1;7] => colors
-    board[1][3] = 2
-    board[1][4] = 2
-    board[2][3] = 2
-    board[2][4] = 4
-    board[3][4] = 2
-    board[4][4] = 1
-    board[8][8] = 3
-    board[8][9] = 4
-    board[9][9] = 4
-    board[9][19] = 5
-    board[5][0] = 5
+    board = np.zeros((10, 20, 3), np.uint8)#access via board[x][y]
+    board[0][2] = TETROMINOS[1][1] #0 empty, [1;7] => colors
+    board[1][3] = TETROMINOS[2][1]
+    board[1][4] = TETROMINOS[2][1]
+    board[2][3] = TETROMINOS[2][1]
+    board[2][4] = TETROMINOS[4][1]
+    board[3][4] = TETROMINOS[2][1]
+    board[4][4] = TETROMINOS[1][1]
+    board[8][8] = TETROMINOS[3][1]
+    board[8][9] = TETROMINOS[4][1]
+    board[9][9] = TETROMINOS[4][1]
+    board[9][19] = TETROMINOS[5][1]
+    board[5][0] = TETROMINOS[5][1]
     ## Draw board
     drawBoard(board)
 
