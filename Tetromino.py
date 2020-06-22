@@ -102,52 +102,51 @@ class Tetromino:
                 if self.matrice[i][j] == 1:
                     board[self.position[0] + i][self.position[1] + j] = TETROMINOS.get(self.type)[T_TYPE]
 
-    def goDown(self, board):
-        # Board is used to see if the move is possible
+    def __envCollision(self, board, dir):
         for j in range(len(self.matrice)):
             for i in range(len(self.matrice)):
-                # Env colisions
-                if ((self.position[1] + j +  1 < 0 or self.position[1] + j + 1 > 19) or
-                    (self.position[0] + i < 0 or self.position[0] + i > 9)) and (self.matrice[i][j] > 0):
-                    return False
-                # Board colisions
-                if ((self.position[1] + j +  1 > 0 and self.position[1] + j + 1 < 19) and
-                    (self.position[0] + i > 0 and self.position[0] + i < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + i, self.position[1] + j + 1] > 0:
-                    return False
+                if ((self.position[1] + j + dir[1] < 0 or self.position[1] + j + dir[1] > 19) or
+                    (self.position[0] + i + dir[0] < 0 or self.position[0] + i + dir[0] > 9)) and (self.matrice[i][j] > 0):
+                    return True
+        return False
+
+    def __boardCollision(self, board, dir):
+        for j in range(len(self.matrice)):
+            for i in range(len(self.matrice)):
+                if ((self.position[1] + j +  dir[1] > 0 and self.position[1] + j + dir[1] < 19) and
+                    (self.position[0] + i + dir[0] > 0 and self.position[0] + i + dir[0] < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + i + dir[0], self.position[1] + j + dir[1]] > 0:
+                    return True
+        return False
+
+    def goDown(self, board):
+        # Board is used to see if the move is possible
+        if self.__envCollision(board, [0,1]):
+            return False
+        if self.__boardCollision(board, [0,1]):
+            return False
         self.position[1] = self.position[1] + 1
         return True
 
     def goLeft(self, board):
         # Board is used to see if the move is possible
-        for j in range(len(self.matrice)):
-            for i in range(len(self.matrice)):
-                # Env colisions
-                if ((self.position[1] + j < 0 or self.position[1] + j > 19) or
-                    (self.position[0] - 1 + i < 0 or self.position[0] - 1 + i > 9)) and (self.matrice[i][j] > 0):
-                    return False
-                # Board colisions
-                if ((self.position[1] + j > 0 and self.position[1] + j < 19) and
-                    (self.position[0] - 1 + i > 0 and self.position[0] - 1 + i < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] - 1 + i, self.position[1] + j] > 0:
-                    return False
+        if self.__envCollision(board, [-1,0]):
+            return False
+        if self.__boardCollision(board, [-1,0]):
+            return False
         self.position[0] = self.position[0] - 1
 
     def goRight(self, board):
         # Board is used to see if the move is possible
-        for j in range(len(self.matrice)):
-            for i in range(len(self.matrice)):
-                # Env colisions
-                if ((self.position[1] + j < 0 or self.position[1] + j > 19) or
-                    (self.position[0] + 1 + i < 0 or self.position[0] + 1 + i > 9)) and (self.matrice[i][j] > 0):
-                    return False
-                # Board colisions
-                if ((self.position[1] + j > 0 and self.position[1] + j < 19) and
-                    (self.position[0] + 1 + i > 0 and self.position[0] + 1 + i < 9)) and (self.matrice[i][j] > 0) and board[self.position[0] + 1 + i, self.position[1] + j] > 0:
-                    return False
+        if self.__envCollision(board, [1,0]):
+            return False
+        if self.__boardCollision(board, [1,0]):
+            return False
         self.position[0] = self.position[0] + 1
 
     def goUP(self, board):
         # Board is used to see if the move is possible
-        self.position[1] = self.position[1] + 1 # to be changed
+        while self.goDown(board):
+            pass
 
 
 

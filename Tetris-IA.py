@@ -70,9 +70,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.key.set_repeat(300,100)
 pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
 
+board = np.zeros((10, 20), np.int8)
 currentT = generateTetromino()
 
-board = np.zeros((10, 20), np.int8)
 
 # Game loop
 while 1:
@@ -82,7 +82,7 @@ while 1:
             sys.exit()
         elif event.type == pygame.USEREVENT:
             if not(currentT.goDown(board)):
-                currentT.applyOnBoard(board)
+                currentT.applyOnBoard(board) #lock
                 currentT = generateTetromino()
         elif event.type == pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
@@ -94,6 +94,8 @@ while 1:
                 currentT.goRight(board)
             elif event.key == pygame.K_UP:
                 currentT.goUP(board)
+                currentT.applyOnBoard(board) #lock
+                currentT = generateTetromino()
 
     ## Draw board border
     screen.fill(MAIN_COLOR)
