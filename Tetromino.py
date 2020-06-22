@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 T_TYPE=0
 T_COLOR=1
@@ -88,8 +89,11 @@ TETROMINO_S = [7, (0, 255, 0), [np.array([[0,1,1],
 
 TETROMINOS = {"I":TETROMINO_I, "O":TETROMINO_O, "T":TETROMINO_T, "L":TETROMINO_L, "J":TETROMINO_J, "Z":TETROMINO_Z, "S":TETROMINO_S}
 
+TETROMINOS_COLOR = [(0,0,0),(0, 255, 255), (255, 255, 0), (170, 0, 255), (255, 165, 0), (0, 0, 255), (255, 0, 0), (0, 255, 0)]
+TETROMINOS_LIST = ["I", "O", "T", "L", "J", "Z", "S"]
+
 class Tetromino:
-    def __init__(self, type, rotation, position):
+    def __init__(self, type = "I", rotation = 0, position = [0, 2]):
         self.color = TETROMINOS.get(type)[T_COLOR] # TETROMINOS[type].color TETROMINOS.get(type)[T_COLOR]
         self.type = type #between 0 and 7
         self.rotation = rotation
@@ -168,6 +172,9 @@ class Tetromino:
             return False
         self.rotation = (self.rotation + 1) % 4
         self.matrice = TETROMINOS.get(self.type)[T_MATRICE][self.rotation]
+
+    def generateTetromino(self):
+        return Tetromino(TETROMINOS_LIST[random.randint(0,6)], 0, [2,0])
 
 
 

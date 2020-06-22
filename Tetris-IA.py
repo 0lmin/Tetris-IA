@@ -1,10 +1,9 @@
-import sys, pygame
-import numpy as np
 import copy
+import pygame
 import random
 import Tetromino
-
-pygame.quit()
+import Board
+import sys
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -36,46 +35,16 @@ DOT_SPACE_HEIGHT = int(BOARD_HEIGHT / 20)
 DOT_RADIUS = int(BOARD_LEFT / 100)
 
 SCREEN_BORDER = 15
-
 GRAVITY_TICK = 500
 
 TETROMINOS_COLOR = [(0,0,0),(0, 255, 255), (255, 255, 0), (170, 0, 255), (255, 165, 0), (0, 0, 255), (255, 0, 0), (0, 255, 0)]
 TETROMINOS_LIST = ["I", "O", "T", "L", "J", "Z", "S"]
 
-##
-level = 0
-score = 0
-Leaderboard = [["Clément", 9999], ["Axel", -1]]
-
-#Methods
-def drawBoard(board):
-    for i in range(0, 10):
-        for j in range(0, 20):
-            cell = board[i][j]
-            if(cell != 0):
-                rectOrigin = (BOARD_LEFT + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
-                rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
-                rectToDraw = pygame.Rect( rectOrigin, rectSize )
-                pygame.draw.rect(screen, TETROMINOS_COLOR[cell], rectToDraw) ##2nd argument should be replaced by color
-
-def generateTetromino():
-    return Tetromino.Tetromino(TETROMINOS_LIST[random.randint(0,6)], 0, [2,0])
-
 # Main code
 
-## Init pygame environment
-pygame.init()
+mainBoard = Board.Board()
 
-## Create surface
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-# Gravity event
-pygame.key.set_repeat(300,100)
-pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
-
-board = np.zeros((10, 20), np.int8)
-currentT = generateTetromino()
-
+currentT = Tetromino.Tetromino().generateTetromino()
 
 # Game loop
 while 1:
@@ -84,63 +53,32 @@ while 1:
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.USEREVENT:
-            if not(currentT.goDown(board)):
-                currentT.applyOnBoard(board) #lock
-                currentT = generateTetromino()
+            if not(currentT.goDown(mainBoard.board)):
+                currentT.applyOnBoard(mainBoard.board) #lock
+                currentT = currentT.generateTetromino()
         elif event.type == pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
-                if currentT.goDown(board):
+                if currentT.goDown(mainBoard.board):
                     pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
             elif event.key == pygame.K_LEFT:
-                currentT.goLeft(board)
+                currentT.goLeft(mainBoard.board)
             elif event.key == pygame.K_RIGHT:
-                currentT.goRight(board)
+                currentT.goRight(mainBoard.board)
             elif event.key == pygame.K_UP:
-                currentT.goUP(board)
-                currentT.applyOnBoard(board) #lock
-                currentT = generateTetromino()
+                currentT.goUP(mainBoard.board)
+                currentT.applyOnBoard(mainBoard.board) #lock
+                currentT = currentT.generateTetromino()
             elif event.key == pygame.K_b:
-                currentT.rotateLeft(board)
+                currentT.rotateLeft(mainBoard.board)
             elif event.key == pygame.K_n:
-                currentT.rotateRight(board)
+                currentT.rotateRight(mainBoard.board)
 
-    ## Draw board border
-    screen.fill(MAIN_COLOR)
-    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
-    font = pygame.font.Font(FONT, FONT_SIZE)
-    title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
-    titleRect = title.get_rect()
-    titleRect.center = (BOARD_LEFT + int(BOARD_WIDTH / 2), BOARD_TOP)
-    screen.blit(title, titleRect)
-
-    # Draw Stats border
-    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
-
-    # Draw dots
-    for i in range(1, 11):
-        for j in range(1, 21):
-            pygame.draw.circle(screen, SECONDARY_COLOR,
-                (BOARD_LEFT - int(DOT_SPACE_WIDTH / 2) + (i * DOT_SPACE_WIDTH), BOARD_TOP - int(DOT_SPACE_HEIGHT / 2) + j * DOT_SPACE_HEIGHT), DOT_RADIUS)
+    # Draw screen
+    mainBoard.draw()
 
     # Draw board
-    changedBoard = copy.deepcopy(board)
+    changedBoard = copy.deepcopy(mainBoard.board)
     currentT.applyOnBoard(changedBoard)
-    drawBoard(changedBoard)
-
-    # Draw Stats border
-    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
-
-    # Draw Stats
-    font = pygame.font.Font(FONT, FONT_SIZE)
-    levelText = font.render("Level : " +str(level), True, SECONDARY_COLOR, MAIN_COLOR)
-    levelTextRect = levelText.get_rect()
-    levelTextRect.topleft = (2 * SCREEN_BORDER, int(BOARD_HEIGHT / 4) + SCREEN_BORDER)
-    screen.blit(levelText, levelTextRect)
-
-    font = pygame.font.Font(FONT, FONT_SIZE)
-    scoreText = font.render("Score : " + str(score), True, SECONDARY_COLOR, MAIN_COLOR)
-    scoreTextRect = scoreText.get_rect()
-    scoreTextRect.topleft = (2 * SCREEN_BORDER, int(BOARD_HEIGHT / 4) + (2 * SCREEN_BORDER + FONT_SIZE))
-    screen.blit(scoreText, scoreTextRect)
+    mainBoard.drawBoard(changedBoard)
 
     pygame.display.flip()
