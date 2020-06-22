@@ -4,6 +4,7 @@ import random
 import Tetromino
 import Board
 import sys
+import time
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -45,6 +46,7 @@ TETROMINOS_LIST = ["I", "O", "T", "L", "J", "Z", "S"]
 mainBoard = Board.Board()
 
 currentT = Tetromino.Tetromino().generateTetromino()
+mainBoard.fillStore()
 
 # Game loop
 while 1:
@@ -55,7 +57,7 @@ while 1:
         elif event.type == pygame.USEREVENT:
             if not(currentT.goDown(mainBoard.board)):
                 currentT.applyOnBoard(mainBoard.board) #lock
-                currentT = currentT.generateTetromino()
+                currentT = mainBoard.nextT()
         elif event.type == pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
                 if currentT.goDown(mainBoard.board):
@@ -67,7 +69,7 @@ while 1:
             elif event.key == pygame.K_UP:
                 currentT.goUP(mainBoard.board)
                 currentT.applyOnBoard(mainBoard.board) #lock
-                currentT = currentT.generateTetromino()
+                currentT = mainBoard.nextT()
             elif event.key == pygame.K_b:
                 currentT.rotateLeft(mainBoard.board)
             elif event.key == pygame.K_n:
@@ -77,7 +79,6 @@ while 1:
     mainBoard.draw()
 
     # Draw board
-    mainBoard.deleteFullLine() # Add score + add level
     changedBoard = copy.deepcopy(mainBoard.board)
     if currentT.applyOnBoard(changedBoard):
         # Game over
@@ -85,4 +86,5 @@ while 1:
         sys.exit()
     mainBoard.drawBoard(changedBoard)
 
+    mainBoard.deleteFullLine()
     pygame.display.flip()
