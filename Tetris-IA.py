@@ -99,6 +99,10 @@ while 1:
                 currentT.goUP(board)
                 currentT.applyOnBoard(board) #lock
                 currentT = generateTetromino()
+            elif event.key == pygame.K_b:
+                currentT.rotateLeft(board)
+            elif event.key == pygame.K_n:
+                currentT.rotateRight(board)
 
     ## Draw board border
     screen.fill(MAIN_COLOR)
@@ -122,14 +126,6 @@ while 1:
     changedBoard = copy.deepcopy(board)
     currentT.applyOnBoard(changedBoard)
     drawBoard(changedBoard)
-
-    ## Draw board border
-    pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((BOARD_LEFT, BOARD_TOP), (BOARD_WIDTH, BOARD_HEIGHT)), 2)
-    font = pygame.font.Font(FONT, FONT_SIZE)
-    title = font.render("Tetris", True, SECONDARY_COLOR, MAIN_COLOR)
-    titleRect = title.get_rect()
-    titleRect.center = (BOARD_LEFT + int(BOARD_WIDTH / 2), BOARD_TOP -15)
-    screen.blit(title, titleRect)
 
     # Draw Stats border
     pygame.draw.rect(screen, SECONDARY_COLOR, pygame.Rect((SCREEN_BORDER, int(BOARD_HEIGHT / 4)), (BOARD_WIDTH - (2 * SCREEN_BORDER), 3 * SCREEN_BORDER + 2 * FONT_SIZE)), 2)# BOARD_HEIGHT / 4)), 2)
