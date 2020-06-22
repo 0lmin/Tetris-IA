@@ -74,6 +74,8 @@ while 1:
                 currentT.rotateLeft(mainBoard.board)
             elif event.key == pygame.K_n:
                 currentT.rotateRight(mainBoard.board)
+            elif event.key == pygame.K_SPACE:
+                currentT = mainBoard.goStore(currentT)
 
     # Draw screen
     mainBoard.draw()

@@ -3,6 +3,7 @@ import numpy as np
 import Tetromino
 import functools
 import time
+import copy
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -39,6 +40,84 @@ GRAVITY_TICK = 500
 TETROMINOS_COLOR = [(255,255,255),(0, 255, 255), (255, 255, 0), (170, 0, 255), (255, 165, 0), (0, 0, 255), (255, 0, 0), (0, 255, 0),(255,255,255)]
 TETROMINOS_LIST = ["I", "O", "T", "L", "J", "Z", "S"]
 
+T_TYPE=0
+T_COLOR=1
+T_MATRICE=2
+
+TETROMINO_I = [1, (0, 255, 255), [np.array([[0,0,0,0],
+                                              [1,1,1,1],
+                                              [0,0,0,0],
+                                              [0,0,0,0]]), np.array([[0,1,0,0],
+                                                                     [0,1,0,0],
+                                                                     [0,1,0,0],
+                                                                     [0,1,0,0]]), np.array([[0,0,0,0],
+                                                                                            [0,0,0,0],
+                                                                                            [1,1,1,1],
+                                                                                            [0,0,0,0]]), np.array([[0,0,1,0],
+                                                                                                                   [0,0,1,0],
+                                                                                                                   [0,0,1,0],
+                                                                                                                   [0,0,1,0]])]]
+TETROMINO_O = [2, (255, 255, 0), [np.array([[0,0,0,0],
+                                            [1,1,0,0],
+                                            [1,1,0,0],
+                                            [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                   [1,1,0,0],
+                                                                   [1,1,0,0],
+                                                                   [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                                          [1,1,0,0],
+                                                                                          [1,1,0,0],
+                                                                                          [0,0,0,0]]), np.array([[0,0,0,0],
+                                                                                                                 [1,1,0,0],
+                                                                                                                 [1,1,0,0],
+                                                                                                                 [0,0,0,0]])]]
+TETROMINO_T = [3, (170, 0, 255), [np.array([[0,1,0],
+                                              [1,1,1],
+                                              [0,0,0]]),np.array([[0,1,0],
+                                                                 [0,1,1],
+                                                                 [0,1,0]]), np.array([[0,0,0],
+                                                                                      [1,1,1],
+                                                                                      [0,1,0]]), np.array([[0,1,0],
+                                                                                                           [1,1,0],
+                                                                                                           [0,1,0]])]]
+TETROMINO_L = [4, (255, 165, 0), [np.array([[0,0,1],
+                                              [1,1,1],
+                                              [0,0,0]]),np.array([[0,1,0],
+                                                                 [0,1,0],
+                                                                 [0,1,1]]), np.array([[0,0,0],
+                                                                                      [1,1,1],
+                                                                                      [1,0,0]]), np.array([[1,1,0],
+                                                                                                           [0,1,0],
+                                                                                                           [0,1,0]])]]
+TETROMINO_J = [5, (0, 0, 255), [np.array([[1,0,0],
+                                            [1,1,1],
+                                            [0,0,0]]),np.array([[0,1,1],
+                                                               [0,1,0],
+                                                               [0,1,0]]), np.array([[0,0,0],
+                                                                                    [1,1,1],
+                                                                                    [0,0,1]]), np.array([[0,1,0],
+                                                                                                         [0,1,0],
+                                                                                                         [1,1,0]])]]
+TETROMINO_Z = [6, (255, 0, 0), [np.array([[1,1,0],
+                                            [0,1,1],
+                                            [0,0,0]]),np.array([[0,0,1],
+                                                               [0,1,1],
+                                                               [0,1,0]]), np.array([[0,0,0],
+                                                                                    [1,1,0],
+                                                                                    [0,1,1]]), np.array([[0,1,0],
+                                                                                                         [1,1,0],
+                                                                                                         [1,0,0]])]]
+TETROMINO_S = [7, (0, 255, 0), [np.array([[0,1,1],
+                                            [1,1,0],
+                                            [0,0,0]]),np.array([[0,1,0],
+                                                                 [0,1,1],
+                                                                 [0,0,1]]), np.array([[0,0,0],
+                                                                                      [0,1,1],
+                                                                                      [1,1,0]]), np.array([[1,0,0],
+                                                                                                           [1,1,0],
+                                                                                                           [0,1,0]])]]
+
+TETROMINOS = {"I":TETROMINO_I, "O":TETROMINO_O, "T":TETROMINO_T, "L":TETROMINO_L, "J":TETROMINO_J, "Z":TETROMINO_Z, "S":TETROMINO_S}
+
 ##
 level = 0
 score = 0
@@ -54,6 +133,8 @@ class Board:
         self.level = 0
         self.score = 0
 
+        self.isStoreOpen = True
+
         self.store = None
         self.next = [None, None, None]
 
@@ -67,6 +148,7 @@ class Board:
         self.next[2] = Tetromino.Tetromino().generateTetromino()
 
     def nextT(self):
+        self.isStoreOpen = True
         t = self.next[0]
         self.next[0] = self.next[1]
         self.next[1] = self.next[2]
@@ -110,8 +192,28 @@ class Board:
 
     def drawNext(self):
         # Drax the next Tetrominos
-        for i in range(3):
-            print(next[i].type)
+        for k in range(3):
+            for i in range(len(self.next[k].matrice)):
+                for j in range(len(self.next[k].matrice)):
+                    cell = self.next[k].matrice[i][j]
+                    if(cell != 0):
+                        rectOrigin = (int(2 * SCREEN_WIDTH / 3) + k * int(SCREEN_WIDTH / 10) + SCREEN_BORDER + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
+                        rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
+                        rectToDraw = pygame.Rect( rectOrigin, rectSize )
+                        pygame.draw.rect(self.screen, TETROMINOS.get(self.next[k].type)[T_COLOR], rectToDraw)
+
+    def drawStore(self):
+        if self.store == None:
+            return
+        # Drax the next Tetrominos
+        for i in range(len(self.store.matrice)):
+            for j in range(len(self.store.matrice)):
+                cell = self.store.matrice[i][j]
+                if(cell != 0):
+                    rectOrigin = (SCREEN_BORDER + (i * DOT_SPACE_WIDTH) +1, BOARD_TOP + j * DOT_SPACE_HEIGHT +1)
+                    rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
+                    rectToDraw = pygame.Rect( rectOrigin, rectSize )
+                    pygame.draw.rect(self.screen, TETROMINOS.get(self.store.type)[T_COLOR], rectToDraw)
 
     def drawBoard(self,board):
         self.draw()
@@ -123,6 +225,8 @@ class Board:
                     rectSize = (DOT_SPACE_WIDTH -2, DOT_SPACE_HEIGHT -2)
                     rectToDraw = pygame.Rect( rectOrigin, rectSize )
                     pygame.draw.rect(self.screen, TETROMINOS_COLOR[cell], rectToDraw) ##2nd argument should be replaced by color
+        self.drawNext()
+        self.drawStore()
 
     def deleteFullLine(self):
         test = False
@@ -148,3 +252,16 @@ class Board:
                 for k in range(10):
                     for l in range(j, 0, -1):
                         self.board[k][l] = self.board[k][l - 1]
+
+    def goStore(self, currentT):
+        if self.isStoreOpen:
+            currentT.position = [2,0]
+            self.isStoreOpen = False
+            if self.store == None:
+                self.store = currentT
+                return self.nextT()
+            else:
+                tmp = copy.deepcopy(self.store)
+                self.store = currentT
+                return tmp
+        return currentT
