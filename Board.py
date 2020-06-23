@@ -120,7 +120,7 @@ TETROMINOS = {"I":TETROMINO_I, "O":TETROMINO_O, "T":TETROMINO_T, "L":TETROMINO_L
 
 ##
 level = 0
-score = 0
+SCORE = [0, 40, 100, 300, 1200]
 Leaderboard = [["Clément", 9999], ["Axel", -1]]
 
 class Board:
@@ -185,7 +185,7 @@ class Board:
         self.screen.blit(levelText, levelTextRect)
 
         font = pygame.font.Font(FONT, FONT_SIZE)
-        scoreText = font.render("Score : " + str(score), True, SECONDARY_COLOR, MAIN_COLOR)
+        scoreText = font.render("Score : " + str(self.score), True, SECONDARY_COLOR, MAIN_COLOR)
         scoreTextRect = scoreText.get_rect()
         scoreTextRect.topleft = (2 * SCREEN_BORDER, int(BOARD_HEIGHT / 4) + (2 * SCREEN_BORDER + FONT_SIZE))
         self.screen.blit(scoreText, scoreTextRect)
@@ -229,17 +229,17 @@ class Board:
         self.drawStore()
 
     def deleteFullLine(self):
-        test = False
+        test = 0
         # Delete full line
         for j in range(20):
             for i in range(10):
                 if self.board[i][j] == 0:
                     break
             if i == 9 and self.board[i][j] != 0:
-                test = True
+                test += 1
                 for k in range(10):
                     self.board[k][j] = 8
-        if test:
+        if test > 0:
             self.drawBoard(self.board)
             pygame.display.flip()
             pygame.time.delay(200)
@@ -252,6 +252,7 @@ class Board:
                 for k in range(10):
                     for l in range(j, 0, -1):
                         self.board[k][l] = self.board[k][l - 1]
+        self.score += SCORE[test]
 
     def goStore(self, currentT):
         if self.isStoreOpen:
