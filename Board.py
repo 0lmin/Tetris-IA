@@ -4,6 +4,7 @@ import Tetromino
 import functools
 import time
 import copy
+import sys
 
 # Define the colors we will use in RGB format
 BLACK = (  0,   0,   0)
@@ -119,7 +120,6 @@ TETROMINO_S = [7, (0, 255, 0), [np.array([[0,1,1],
 TETROMINOS = {"I":TETROMINO_I, "O":TETROMINO_O, "T":TETROMINO_T, "L":TETROMINO_L, "J":TETROMINO_J, "Z":TETROMINO_Z, "S":TETROMINO_S}
 
 ##
-level = 0
 SCORE = [0, 40, 100, 300, 1200]
 Leaderboard = [["Clément", 9999], ["Axel", -1]]
 
@@ -132,10 +132,11 @@ class Board:
         self.board = np.zeros((10, 20), np.int8)
         self.level = 0
         self.score = 0
+        self.nbLine = 0
 
         self.isStoreOpen = True
-
         self.store = None
+
         self.next = [None, None, None]
 
         # Gravity event
@@ -179,7 +180,7 @@ class Board:
 
         # Draw Stats
         font = pygame.font.Font(FONT, FONT_SIZE)
-        levelText = font.render("Level : " +str(level), True, SECONDARY_COLOR, MAIN_COLOR)
+        levelText = font.render("Level : " +str(self.level), True, SECONDARY_COLOR, MAIN_COLOR)
         levelTextRect = levelText.get_rect()
         levelTextRect.topleft = (2 * SCREEN_BORDER, int(BOARD_HEIGHT / 4) + SCREEN_BORDER)
         self.screen.blit(levelText, levelTextRect)
@@ -228,6 +229,10 @@ class Board:
         self.drawNext()
         self.drawStore()
 
+    def nextLevel(self):
+        # Update gravity tick
+        self.level += 1
+
     def deleteFullLine(self):
         test = 0
         # Delete full line
@@ -249,10 +254,13 @@ class Board:
                 if self.board[i][j] == 0:
                     break
             if i == 9 and self.board[i][j] != 0:
+                self.nbLine += 1
                 for k in range(10):
                     for l in range(j, 0, -1):
                         self.board[k][l] = self.board[k][l - 1]
-        self.score += SCORE[test]
+                if self.nbLine % 10 == 0:
+                    self.nextLevel()
+        self.score += SCORE[test] * (self.level + 1)
 
     def goStore(self, currentT):
         if self.isStoreOpen:
@@ -266,3 +274,26 @@ class Board:
                 self.store = currentT
                 return tmp
         return currentT
+
+    def drawPause(self):
+        self.screen.fill(MAIN_COLOR)
+        font = pygame.font.Font(FONT, 100)
+        pauseText = font.render("PAUSE", True, SECONDARY_COLOR, MAIN_COLOR)
+        pauseTextRect = pauseText.get_rect()
+        pauseTextRect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        self.screen.blit(pauseText, pauseTextRect)
+        pygame.display.flip()
+
+    def pause(self):
+        pygame.time.set_timer(pygame.USEREVENT,0)
+        while True:
+            self.drawPause()
+            e = pygame.event.get()
+            for event in e:
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    print("OUI")
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.time.set_timer(pygame.USEREVENT,GRAVITY_TICK)
+                        return
