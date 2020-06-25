@@ -280,8 +280,19 @@ class Board:
         font = pygame.font.Font(FONT, 100)
         pauseText = font.render("PAUSE", True, SECONDARY_COLOR, MAIN_COLOR)
         pauseTextRect = pauseText.get_rect()
-        pauseTextRect.center = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        pauseTextRect.center = (SCREEN_WIDTH / 2, 100)
         self.screen.blit(pauseText, pauseTextRect)
+
+        def drawKeyBinding(self, height_origin):
+            lines = ["left and right : move lateraly tetromino", "down : fast forward", "up : place the tetromino", "n and b : rotate left and right", "space : store/swap", "escape : pause"]
+            for i in range(len(lines)):
+                font = pygame.font.Font(FONT, 30)
+                helpText = font.render(lines[i], True, SECONDARY_COLOR, MAIN_COLOR)
+                helpTextRect = helpText.get_rect()
+                helpTextRect.center = (SCREEN_WIDTH / 2, height_origin + i*50 + 100)
+                self.screen.blit(helpText, helpTextRect)
+        drawKeyBinding(self, SCREEN_HEIGHT / 2 - 200)
+
         pygame.display.flip()
 
     def pause(self):
